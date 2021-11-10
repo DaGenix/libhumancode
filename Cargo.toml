@@ -1,0 +1,23 @@
+[package]
+name = "libhumancode"
+version = "1.0.0"
+edition = "2018"
+authors = ["Palmer Cox <p@lmercox.com>"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/DaGenix/libhumancode"
+documentation = "https://docs.rs/libhumancode"
+homepage = "https://github.com/DaGenix/libhumancode"
+description = """
+A `no_std` compatible library that provides a function
+to enode binary data up to 150 bits in a human friendly format.
+"""
+categories = ["algorithms"]
+
+[dependencies]
+libzbase32 = {version = "1.1.0", default-features = false }
+reed-solomon-32 = {version = "1.0.0", default-features = false }
+
+[features]
+default = ["std"]
+std = ["libzbase32/std", "reed-solomon-32/std"]
