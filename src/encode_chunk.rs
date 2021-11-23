@@ -5,7 +5,7 @@ use libzbase32::low_level_encode::{
     octets_to_quintets, quintet_to_character, required_quintets_buffer_len,
 };
 use reed_solomon_32::Encoder;
-use std::fmt::{Debug, Display, Formatter};
+use core::fmt::{Debug, Display, Formatter};
 
 /// An Encoded chunk of bytes
 ///
@@ -54,7 +54,7 @@ pub struct EncodedChunkRaw {
 impl EncodedChunkRaw {
     /// Get the code as a `str`
     pub fn as_str(&self) -> &str {
-        std::str::from_utf8(&self.buf.as_bytes())
+        core::str::from_utf8(&self.buf.as_bytes())
             .expect("Encoded result couldn't be converted to utf-8 - which shouldn't be possible")
     }
 }
@@ -66,13 +66,13 @@ impl AsRef<str> for EncodedChunkRaw {
 }
 
 impl Debug for EncodedChunkRaw {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(f, "{}", self.as_str())
     }
 }
 
 impl Display for EncodedChunkRaw {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(f, "{}", self.as_str())
     }
 }
@@ -108,7 +108,7 @@ impl EncodedChunkPretty {
 
     /// Get the code as a `str`
     pub fn as_str(&self) -> &str {
-        std::str::from_utf8(&self.buf.as_bytes())
+        core::str::from_utf8(&self.buf.as_bytes())
             .expect("Encoded result couldn't be converted to utf-8 - which shouldn't be possible")
     }
 }
@@ -120,13 +120,13 @@ impl AsRef<str> for EncodedChunkPretty {
 }
 
 impl Debug for EncodedChunkPretty {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(f, "{}", self.as_str())
     }
 }
 
 impl Display for EncodedChunkPretty {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(f, "{}", self.as_str())
     }
 }

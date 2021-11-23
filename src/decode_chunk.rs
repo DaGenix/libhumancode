@@ -7,7 +7,7 @@ use libzbase32::low_level_decode::{
 use libzbase32::low_level_encode::required_quintets_buffer_len;
 use libzbase32::ZBase32ErrorType;
 use reed_solomon_32::Decoder;
-use std::fmt::{Debug, Formatter};
+use core::fmt::{Debug, Formatter};
 
 /// A decoded chunk of bytes
 ///
@@ -32,7 +32,7 @@ impl AsRef<[u8]> for DecodedChunk {
 }
 
 impl Debug for DecodedChunk {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(f, "{:?}", self.as_bytes())
     }
 }
