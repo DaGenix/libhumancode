@@ -7,7 +7,91 @@ use libzbase32::low_level_decode::{
 };
 use libzbase32::low_level_encode::required_quintets_buffer_len;
 use libzbase32::ZBase32ErrorType;
-use reed_solomon_32::Decoder;
+use reed_solomon_32::decoder as reed_solomoon_decoder;
+
+/// [`ChunkDecoder`] for messages with no error correcting symbols
+pub const CHUNK_DECODER_0: ChunkDecoder = ChunkDecoder::new(&reed_solomoon_decoder::DECODER_0, 0);
+/// [`ChunkDecoder`] for messages with 1 error correcting symbol
+pub const CHUNK_DECODER_1: ChunkDecoder = ChunkDecoder::new(&reed_solomoon_decoder::DECODER_1, 1);
+/// [`ChunkDecoder`] for messages with 2 error correcting symbols
+pub const CHUNK_DECODER_2: ChunkDecoder = ChunkDecoder::new(&reed_solomoon_decoder::DECODER_2, 2);
+/// [`ChunkDecoder`] for messages with 3 error correcting symbols
+pub const CHUNK_DECODER_3: ChunkDecoder = ChunkDecoder::new(&reed_solomoon_decoder::DECODER_3, 3);
+/// [`ChunkDecoder`] for messages with 4 error correcting symbols
+pub const CHUNK_DECODER_4: ChunkDecoder = ChunkDecoder::new(&reed_solomoon_decoder::DECODER_4, 4);
+/// [`ChunkDecoder`] for messages with 5 error correcting symbols
+pub const CHUNK_DECODER_5: ChunkDecoder = ChunkDecoder::new(&reed_solomoon_decoder::DECODER_5, 5);
+/// [`ChunkDecoder`] for messages with 6 error correcting symbols
+pub const CHUNK_DECODER_6: ChunkDecoder = ChunkDecoder::new(&reed_solomoon_decoder::DECODER_6, 6);
+/// [`ChunkDecoder`] for messages with 7 error correcting symbols
+pub const CHUNK_DECODER_7: ChunkDecoder = ChunkDecoder::new(&reed_solomoon_decoder::DECODER_7, 7);
+/// [`ChunkDecoder`] for messages with 8 error correcting symbols
+pub const CHUNK_DECODER_8: ChunkDecoder = ChunkDecoder::new(&reed_solomoon_decoder::DECODER_8, 8);
+/// [`ChunkDecoder`] for messages with 9 error correcting symbols
+pub const CHUNK_DECODER_9: ChunkDecoder = ChunkDecoder::new(&reed_solomoon_decoder::DECODER_9, 9);
+/// [`ChunkDecoder`] for messages with 10 error correcting symbols
+pub const CHUNK_DECODER_10: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_10, 10);
+/// [`ChunkDecoder`] for messages with 11 error correcting symbols
+pub const CHUNK_DECODER_11: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_11, 11);
+/// [`ChunkDecoder`] for messages with 12 error correcting symbols
+pub const CHUNK_DECODER_12: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_12, 12);
+/// [`ChunkDecoder`] for messages with 13 error correcting symbols
+pub const CHUNK_DECODER_13: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_13, 13);
+/// [`ChunkDecoder`] for messages with 14 error correcting symbols
+pub const CHUNK_DECODER_14: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_14, 14);
+/// [`ChunkDecoder`] for messages with 15 error correcting symbols
+pub const CHUNK_DECODER_15: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_15, 15);
+/// [`ChunkDecoder`] for messages with 16 error correcting symbols
+pub const CHUNK_DECODER_16: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_16, 16);
+/// [`ChunkDecoder`] for messages with 17 error correcting symbols
+pub const CHUNK_DECODER_17: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_17, 17);
+/// [`ChunkDecoder`] for messages with 18 error correcting symbols
+pub const CHUNK_DECODER_18: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_18, 18);
+/// [`ChunkDecoder`] for messages with 19 error correcting symbols
+pub const CHUNK_DECODER_19: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_19, 19);
+/// [`ChunkDecoder`] for messages with 20 error correcting symbols
+pub const CHUNK_DECODER_20: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_20, 20);
+/// [`ChunkDecoder`] for messages with 21 error correcting symbols
+pub const CHUNK_DECODER_21: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_21, 21);
+/// [`ChunkDecoder`] for messages with 22 error correcting symbols
+pub const CHUNK_DECODER_22: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_22, 22);
+/// [`ChunkDecoder`] for messages with 23 error correcting symbols
+pub const CHUNK_DECODER_23: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_23, 23);
+/// [`ChunkDecoder`] for messages with 24 error correcting symbols
+pub const CHUNK_DECODER_24: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_24, 24);
+/// [`ChunkDecoder`] for messages with 25 error correcting symbols
+pub const CHUNK_DECODER_25: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_25, 25);
+/// [`ChunkDecoder`] for messages with 26 error correcting symbols
+pub const CHUNK_DECODER_26: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_26, 26);
+/// [`ChunkDecoder`] for messages with 27 error correcting symbols
+pub const CHUNK_DECODER_27: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_27, 27);
+/// [`ChunkDecoder`] for messages with 28 error correcting symbols
+pub const CHUNK_DECODER_28: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_28, 28);
+/// [`ChunkDecoder`] for messages with 29 error correcting symbols
+pub const CHUNK_DECODER_29: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_29, 29);
+/// [`ChunkDecoder`] for messages with 30 error correcting symbols
+pub const CHUNK_DECODER_30: ChunkDecoder =
+    ChunkDecoder::new(&reed_solomoon_decoder::DECODER_30, 30);
 
 /// A decoded chunk of bytes
 ///
@@ -37,36 +121,26 @@ impl Debug for DecodedChunk {
     }
 }
 
-/// A `ChunkDecoder` can decode a string encoded with [`ChunkEncoder`](crate::ChunkEncoder)
+/// A `ChunkDecoder` can decode an encoded string
 /// and report on any errors that were found / corrected.
 // We don't implement Copy / Clone because ChunkEncoder currently can't
 // and we want to be consistent.
 #[derive(Debug)]
 pub struct ChunkDecoder {
-    rs_decoder: Decoder,
-    ecc: usize,
+    rs_decoder: &'static reed_solomoon_decoder::Decoder,
+    ecc: u8,
 }
 
 impl ChunkDecoder {
-    /// Create a new `ChunkDecoder`.
-    ///
-    /// `ecc` must match the corresponding [`ChunkEncoder`](crate::ChunkEncoder)
-    /// and must be greater than 0 and less or equal to 30.
-    pub fn new(ecc: usize) -> Result<ChunkDecoder, HumancodeError> {
-        if ecc == 0 || ecc >= 31 {
-            return Err(error(HumancodeErrorInfo::InvalidECCLen));
-        }
-        Ok(ChunkDecoder {
-            rs_decoder: Decoder::new(ecc),
-            ecc,
-        })
+    const fn new(rs_decoder: &'static reed_solomoon_decoder::Decoder, ecc: u8) -> ChunkDecoder {
+        ChunkDecoder { rs_decoder, ecc }
     }
 
-    /// Decode and correct a chunk encoded by [`encode_chunk`](crate::ChunkEncoder::encode_chunk)
+    /// Decode and correct an encoded message.
     ///
-    /// `bits` much match the value that was passed to the `ChunkEncoder`.
+    /// `bits` much match the value that was passed to [`encode_chunk`](crate::encode_chunk())
     ///
-    /// `encoded_data` should be a value returned by `ChunkEncoder`. `encoded_data`
+    /// `encoded_data` should be a value returned by `encode_chunk`. `encoded_data`
     /// may include any number of "-" characters which will be ignored.
     ///
     /// `encoded_data` should be validated for the correct length prior to being
@@ -144,11 +218,11 @@ impl ChunkDecoder {
 
         let (quintet_buffer, erase_pos) =
             convert_encoded_data_to_quintets(bits, num_quintets, encoded_data)?;
-        if quintet_buffer.len() <= self.ecc {
+        if quintet_buffer.len() <= self.ecc as usize {
             return Err(error(HumancodeErrorInfo::DecodeBufferSmallerThanEcc));
         }
 
-        if quintet_buffer.len() - self.ecc != num_quintets {
+        if quintet_buffer.len() - self.ecc as usize != num_quintets {
             return Err(error(HumancodeErrorInfo::DecodeBufferWrongSize));
         }
 
@@ -191,5 +265,64 @@ impl ChunkDecoder {
             .expect("quintets_to_octets() failed - which shouldn't be possible");
 
         Ok((decoded_chunk, corrected_chunk))
+    }
+}
+
+/// Decode and correct an encoded message.
+///
+/// `bits` much match the value that was passed to [`encode_chunk`](crate::encode_chunk())
+///
+/// `encoded_data` should be a value returned by `encode_chunk`. `encoded_data`
+/// may include any number of "-" characters which will be ignored.
+///
+/// `encoded_data` should be validated for the correct length prior to being
+/// passed to this method. Incorrect lengths will result in errors of
+/// type [`UsageError`](crate::HumancodeErrorType::UsageError).
+///
+/// `ecc` indicates the number of error correcting symbols to use and must
+/// match the value passed to `encode_chunk`.
+///
+/// On success, a tuple of [`DecodedChunk`] and an Optional [`EncodedChunk`]
+/// is returned. The `EncodedChunk` will only be a `Some` value if there was
+/// an error in the input that was corrected. It is strongly recommended that
+/// the user be prompted to review any errors.
+pub fn decode_chunk(
+    encoded_data: &str,
+    ecc: u8,
+    bits: u8,
+) -> Result<(DecodedChunk, Option<EncodedChunk>), HumancodeError> {
+    match ecc {
+        0 => CHUNK_DECODER_0.decode_chunk(encoded_data, bits),
+        1 => CHUNK_DECODER_1.decode_chunk(encoded_data, bits),
+        2 => CHUNK_DECODER_2.decode_chunk(encoded_data, bits),
+        3 => CHUNK_DECODER_3.decode_chunk(encoded_data, bits),
+        4 => CHUNK_DECODER_4.decode_chunk(encoded_data, bits),
+        5 => CHUNK_DECODER_5.decode_chunk(encoded_data, bits),
+        6 => CHUNK_DECODER_6.decode_chunk(encoded_data, bits),
+        7 => CHUNK_DECODER_7.decode_chunk(encoded_data, bits),
+        8 => CHUNK_DECODER_8.decode_chunk(encoded_data, bits),
+        9 => CHUNK_DECODER_9.decode_chunk(encoded_data, bits),
+        10 => CHUNK_DECODER_10.decode_chunk(encoded_data, bits),
+        11 => CHUNK_DECODER_11.decode_chunk(encoded_data, bits),
+        12 => CHUNK_DECODER_12.decode_chunk(encoded_data, bits),
+        13 => CHUNK_DECODER_13.decode_chunk(encoded_data, bits),
+        14 => CHUNK_DECODER_14.decode_chunk(encoded_data, bits),
+        15 => CHUNK_DECODER_15.decode_chunk(encoded_data, bits),
+        16 => CHUNK_DECODER_16.decode_chunk(encoded_data, bits),
+        17 => CHUNK_DECODER_17.decode_chunk(encoded_data, bits),
+        18 => CHUNK_DECODER_18.decode_chunk(encoded_data, bits),
+        19 => CHUNK_DECODER_19.decode_chunk(encoded_data, bits),
+        20 => CHUNK_DECODER_20.decode_chunk(encoded_data, bits),
+        21 => CHUNK_DECODER_21.decode_chunk(encoded_data, bits),
+        22 => CHUNK_DECODER_22.decode_chunk(encoded_data, bits),
+        23 => CHUNK_DECODER_23.decode_chunk(encoded_data, bits),
+        24 => CHUNK_DECODER_24.decode_chunk(encoded_data, bits),
+        25 => CHUNK_DECODER_25.decode_chunk(encoded_data, bits),
+        26 => CHUNK_DECODER_26.decode_chunk(encoded_data, bits),
+        27 => CHUNK_DECODER_27.decode_chunk(encoded_data, bits),
+        28 => CHUNK_DECODER_28.decode_chunk(encoded_data, bits),
+        29 => CHUNK_DECODER_29.decode_chunk(encoded_data, bits),
+        30 => CHUNK_DECODER_30.decode_chunk(encoded_data, bits),
+        _ => Err(error(HumancodeErrorInfo::InvalidECCLen)),
     }
 }

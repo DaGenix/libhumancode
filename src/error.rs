@@ -15,7 +15,7 @@ pub struct HumancodeError {
 pub enum HumancodeErrorType {
     /// An InputError indicates that an input array contained an invalid
     /// value. For example, an invalid character being passed to
-    /// the [`decode_chunk`](crate::ChunkDecoder::decode_chunk) method.
+    /// the [`decode_chunk`](crate::decode_chunk()) method.
     InputError,
 
     /// A UsageError indicates an error outside of an invalid input value.
@@ -67,7 +67,7 @@ impl Debug for HumancodeError {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         match self.error_info {
             HumancodeErrorInfo::TooManyErrors => write!(f, "There were too many errors in the data to decode"),
-            HumancodeErrorInfo::InvalidECCLen => write!(f, "The number of error correcting symbols must be in the range [1,30]"),
+            HumancodeErrorInfo::InvalidECCLen => write!(f, "The number of error correcting symbols must be in the range [0,30]"),
             HumancodeErrorInfo::InvalidBits => write!(f, "The number of bits to process must be in the range [1,150]"),
             HumancodeErrorInfo::EncodeBufferTooBig => write!(f, "The buffer to encode must be no larger than 19 bytes (up to 150 bits of that can be encoded)"),
             HumancodeErrorInfo::EncodeBufferDoesntMatchBits => write!(f, "The size of the encode buffer didn't match the bits parameter"),

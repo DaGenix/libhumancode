@@ -25,22 +25,19 @@
 //! ## Example
 //!
 //! ```
-//! use libhumancode::{ChunkDecoder, ChunkEncoder};
+//! use libhumancode::{decode_chunk, encode_chunk};
 //!
 //! fn main() {
 //!     const DATA: &'static [u8] = &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 //!     const CORRECT_CODE: &'static str = "yyyo-ryar-ywdy-qnyj-befo-adeq-bhix-4os";
 //!     const INVALID_CODE: &'static str = "!!yo-ryar-ywdy-qnyj-befo-adeq-bhix-4os";
 //!
-//!     let chunk_encoder = ChunkEncoder::new(5).unwrap();
-//!     let chunk_decoder = ChunkDecoder::new(5).unwrap();
-//!
-//!     let encoded = chunk_encoder.encode_chunk(DATA, 128).unwrap();
+//!     let encoded = encode_chunk(DATA, 5, 128).unwrap();
 //!     let encoded_pretty = encoded.pretty();
 //!
 //!     assert_eq!(encoded_pretty.as_str(), CORRECT_CODE);
 //!
-//!     let (decoded, corrected) = chunk_decoder.decode_chunk(INVALID_CODE, 128).unwrap();
+//!     let (decoded, corrected) = decode_chunk(INVALID_CODE, 5, 128).unwrap();
 //!
 //!     assert_eq!(decoded.as_bytes(), DATA);
 //!     assert_eq!(corrected.unwrap().pretty().as_str(), CORRECT_CODE);
@@ -72,6 +69,38 @@ mod smallbytebuf;
 #[cfg(test)]
 mod tests;
 
-pub use decode_chunk::{ChunkDecoder, DecodedChunk};
-pub use encode_chunk::{ChunkEncoder, EncodedChunk, EncodedChunkPretty, EncodedChunkRaw};
+pub use decode_chunk::{decode_chunk, DecodedChunk};
+pub use encode_chunk::{encode_chunk, EncodedChunk, EncodedChunkPretty, EncodedChunkRaw};
 pub use error::{HumancodeError, HumancodeErrorType};
+
+pub mod decoder {
+    //! Using the [`ChunkDecoder`] interfaces in this module _may_ allow for a smaller binary size
+    //! in the future. However, currently there is no size advantage to using these
+    //! interfaces over [`crate::decode_chunk()`]. These interfaces primarily exist
+    //! for consistency with the API of the [`crate::encoder`] module.
+    pub use crate::decode_chunk::{
+        ChunkDecoder, CHUNK_DECODER_0, CHUNK_DECODER_1, CHUNK_DECODER_10, CHUNK_DECODER_11,
+        CHUNK_DECODER_12, CHUNK_DECODER_13, CHUNK_DECODER_14, CHUNK_DECODER_15, CHUNK_DECODER_16,
+        CHUNK_DECODER_17, CHUNK_DECODER_18, CHUNK_DECODER_19, CHUNK_DECODER_2, CHUNK_DECODER_20,
+        CHUNK_DECODER_21, CHUNK_DECODER_22, CHUNK_DECODER_23, CHUNK_DECODER_24, CHUNK_DECODER_25,
+        CHUNK_DECODER_26, CHUNK_DECODER_27, CHUNK_DECODER_28, CHUNK_DECODER_29, CHUNK_DECODER_3,
+        CHUNK_DECODER_30, CHUNK_DECODER_4, CHUNK_DECODER_5, CHUNK_DECODER_6, CHUNK_DECODER_7,
+        CHUNK_DECODER_8, CHUNK_DECODER_9,
+    };
+}
+
+pub mod encoder {
+    //! Using the [`ChunkEncoder`] interfaces _may_ allow for a smaller binary size
+    //! since it _may_ allow for certain pre-calculated tables to be removed at
+    //! build time. This won't work for all targets and at best can save about 1k
+    //! over using [`crate::encode_chunk()`] directly.
+    pub use crate::encode_chunk::{
+        ChunkEncoder, CHUNK_ENCODER_0, CHUNK_ENCODER_1, CHUNK_ENCODER_10, CHUNK_ENCODER_11,
+        CHUNK_ENCODER_12, CHUNK_ENCODER_13, CHUNK_ENCODER_14, CHUNK_ENCODER_15, CHUNK_ENCODER_16,
+        CHUNK_ENCODER_17, CHUNK_ENCODER_18, CHUNK_ENCODER_19, CHUNK_ENCODER_2, CHUNK_ENCODER_20,
+        CHUNK_ENCODER_21, CHUNK_ENCODER_22, CHUNK_ENCODER_23, CHUNK_ENCODER_24, CHUNK_ENCODER_25,
+        CHUNK_ENCODER_26, CHUNK_ENCODER_27, CHUNK_ENCODER_28, CHUNK_ENCODER_29, CHUNK_ENCODER_3,
+        CHUNK_ENCODER_30, CHUNK_ENCODER_4, CHUNK_ENCODER_5, CHUNK_ENCODER_6, CHUNK_ENCODER_7,
+        CHUNK_ENCODER_8, CHUNK_ENCODER_9,
+    };
+}

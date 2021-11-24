@@ -1,4 +1,4 @@
-use crate::{ChunkDecoder, ChunkEncoder};
+use crate::{decode_chunk, encode_chunk};
 
 #[test]
 fn test_happy_path() {
@@ -7,17 +7,10 @@ fn test_happy_path() {
         153, 45, 218, 14, 206, 250, 84, 8, 62, 103, 131, 200, 89, 121, 73, 236,
     ];
 
-    let encoded = ChunkEncoder::new(5)
-        .unwrap()
-        .encode_chunk(VALUE, 128)
-        .unwrap()
-        .raw();
+    let encoded = encode_chunk(VALUE, 5, 128).unwrap().raw();
     assert_eq!(encoded.as_str(), CODE);
 
-    let (decoded, _) = ChunkDecoder::new(5)
-        .unwrap()
-        .decode_chunk(encoded.as_str(), 128)
-        .unwrap();
+    let (decoded, _) = decode_chunk(encoded.as_str(), 5, 128).unwrap();
     assert_eq!(decoded.as_bytes(), VALUE);
 }
 
@@ -30,17 +23,10 @@ fn test_erasures() {
         153, 45, 218, 14, 206, 250, 84, 8, 62, 103, 131, 200, 89, 121, 73, 236,
     ];
 
-    let encoded = ChunkEncoder::new(5)
-        .unwrap()
-        .encode_chunk(VALUE, 128)
-        .unwrap()
-        .raw();
+    let encoded = encode_chunk(VALUE, 5, 128).unwrap().raw();
     assert_eq!(encoded.as_str(), GOOD_CODE);
 
-    let (decoded, _) = ChunkDecoder::new(5)
-        .unwrap()
-        .decode_chunk(BAD_CODE, 128)
-        .unwrap();
+    let (decoded, _) = decode_chunk(BAD_CODE, 5, 128).unwrap();
     assert_eq!(decoded.as_bytes(), VALUE);
 }
 
@@ -54,16 +40,9 @@ fn test_invalid_trailing_octet() {
         153, 45, 218, 14, 206, 250, 84, 8, 62, 103, 131, 200, 89, 121, 73, 236,
     ];
 
-    let encoded = ChunkEncoder::new(5)
-        .unwrap()
-        .encode_chunk(VALUE, 128)
-        .unwrap()
-        .raw();
+    let encoded = encode_chunk(VALUE, 5, 128).unwrap().raw();
     assert_eq!(encoded.as_str(), GOOD_CODE);
 
-    let (decoded, _) = ChunkDecoder::new(5)
-        .unwrap()
-        .decode_chunk(BAD_CODE, 128)
-        .unwrap();
+    let (decoded, _) = decode_chunk(BAD_CODE, 5, 128).unwrap();
     assert_eq!(decoded.as_bytes(), VALUE);
 }

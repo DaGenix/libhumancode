@@ -16,7 +16,7 @@ categories = ["algorithms"]
 
 [dependencies]
 libzbase32 = {version = "1.1.0", default-features = false }
-reed-solomon-32 = {version = "1.0.0", default-features = false }
+reed-solomon-32 = {version = "2.0.0", default-features = false }
 
 [features]
 default = ["std"]
