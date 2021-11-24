@@ -1,11 +1,11 @@
 use crate::error::{error, HumancodeError, HumancodeErrorInfo};
 use crate::smallbytebuf::SmallByteBuf;
+use core::fmt::{Debug, Display, Formatter};
 use libzbase32::low_level_decode::required_octets_buffer_len;
 use libzbase32::low_level_encode::{
     octets_to_quintets, quintet_to_character, required_quintets_buffer_len,
 };
 use reed_solomon_32::Encoder;
-use core::fmt::{Debug, Display, Formatter};
 
 /// An Encoded chunk of bytes
 ///
