@@ -11,13 +11,13 @@ pub struct InputErrorCause {
 }
 
 impl Debug for InputErrorCause {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(f, "There were too many errors in the data to decode")
     }
 }
 
 impl Display for InputErrorCause {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         Debug::fmt(self, f)
     }
 }
@@ -60,7 +60,7 @@ impl Debug for UsageErrorCause {
 }
 
 impl Display for UsageErrorCause {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         Debug::fmt(self, f)
     }
 }
