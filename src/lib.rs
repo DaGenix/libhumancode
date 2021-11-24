@@ -29,15 +29,17 @@
 //!
 //! fn main() {
 //!     const DATA: &'static [u8] = &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+//!     const ECC_SYMBOLS: u8 = 5;
+//!     const BITS: u8 = 128;
 //!     const CORRECT_CODE: &'static str = "yyyo-ryar-ywdy-qnyj-befo-adeq-bhix-4os";
 //!     const INVALID_CODE: &'static str = "!!yo-ryar-ywdy-qnyj-befo-adeq-bhix-4os";
 //!
-//!     let encoded = encode_chunk(DATA, 5, 128).unwrap();
+//!     let encoded = encode_chunk(DATA, ECC_SYMBOLS, BITS).unwrap();
 //!     let encoded_pretty = encoded.pretty();
 //!
 //!     assert_eq!(encoded_pretty.as_str(), CORRECT_CODE);
 //!
-//!     let (decoded, corrected) = decode_chunk(INVALID_CODE, 5, 128).unwrap();
+//!     let (decoded, corrected) = decode_chunk(INVALID_CODE, ECC_SYMBOLS, BITS).unwrap();
 //!
 //!     assert_eq!(decoded.as_bytes(), DATA);
 //!     assert_eq!(corrected.unwrap().pretty().as_str(), CORRECT_CODE);
