@@ -1,4 +1,7 @@
-use crate::error::{error, HumancodeError, HumancodeErrorInfo};
+use crate::error::{
+    decode_buffer_smaller_than_ecc, decode_buffer_too_big, decode_buffer_wrong_size, invalid_bits,
+    invalid_ecc_len, too_many_errors, HumancodeError,
+};
 use crate::smallbytebuf::SmallByteBuf;
 use crate::EncodedChunk;
 use core::fmt::{Debug, Formatter};
@@ -145,7 +148,7 @@ impl ChunkDecoder {
     ///
     /// `encoded_data` should be validated for the correct length prior to being
     /// passed to this method. Incorrect lengths will result in errors of
-    /// type [`UsageError`](crate::HumancodeErrorType::UsageError).
+    /// type [`UsageError`](crate::HumancodeError::UsageError).
     ///
     /// On success, a tuple of [`DecodedChunk`] and an Optional [`EncodedChunk`]
     /// is returned. The `EncodedChunk` will only be a `Some` value if there was
@@ -157,7 +160,7 @@ impl ChunkDecoder {
         bits: u8,
     ) -> Result<(DecodedChunk, Option<EncodedChunk>), HumancodeError> {
         if bits == 0 || bits > 150 {
-            return Err(error(HumancodeErrorInfo::InvalidBits));
+            return Err(invalid_bits());
         }
 
         fn convert_encoded_data_to_quintets(
@@ -176,7 +179,7 @@ impl ChunkDecoder {
                 }
 
                 if out_idx >= out_buffer.len() {
-                    return Err(error(HumancodeErrorInfo::DecoderBufferTooBig));
+                    return Err(decode_buffer_too_big());
                 }
 
                 match character_to_quintet(x) {
@@ -217,11 +220,11 @@ impl ChunkDecoder {
         let (quintet_buffer, erase_pos) =
             convert_encoded_data_to_quintets(bits, num_quintets, encoded_data)?;
         if quintet_buffer.len() <= self.ecc as usize {
-            return Err(error(HumancodeErrorInfo::DecodeBufferSmallerThanEcc));
+            return Err(decode_buffer_smaller_than_ecc());
         }
 
         if quintet_buffer.len() - self.ecc as usize != num_quintets {
-            return Err(error(HumancodeErrorInfo::DecodeBufferWrongSize));
+            return Err(decode_buffer_wrong_size());
         }
 
         let (out, err_count) = match self
@@ -229,7 +232,7 @@ impl ChunkDecoder {
             .correct_err_count(quintet_buffer.as_bytes(), Some(erase_pos.as_bytes()))
         {
             Ok(r) => r,
-            Err(_) => return Err(error(HumancodeErrorInfo::TooManyErrors)),
+            Err(_) => return Err(too_many_errors()),
         };
 
         let corrected_chunk = if err_count > 0 || erase_pos.len() > 0 {
@@ -252,7 +255,7 @@ impl ChunkDecoder {
             // fail below.
             let final_data_quintet = out.data()[out.data().len() - 1];
             if !is_last_quintet_valid(bits as u64, final_data_quintet) {
-                return Err(error(HumancodeErrorInfo::TooManyErrors));
+                return Err(too_many_errors());
             }
         }
 
@@ -275,7 +278,7 @@ impl ChunkDecoder {
 ///
 /// `encoded_data` should be validated for the correct length prior to being
 /// passed to this method. Incorrect lengths will result in errors of
-/// type [`UsageError`](crate::HumancodeErrorType::UsageError).
+/// type [`UsageError`](crate::HumancodeError::UsageError).
 ///
 /// `ecc` indicates the number of error correcting symbols to use and must
 /// match the value passed to `encode_chunk`.
@@ -321,6 +324,6 @@ pub fn decode_chunk(
         28 => CHUNK_DECODER_28.decode_chunk(encoded_data, bits),
         29 => CHUNK_DECODER_29.decode_chunk(encoded_data, bits),
         30 => CHUNK_DECODER_30.decode_chunk(encoded_data, bits),
-        _ => Err(error(HumancodeErrorInfo::InvalidECCLen)),
+        _ => Err(invalid_ecc_len()),
     }
 }

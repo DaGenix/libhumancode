@@ -1,4 +1,7 @@
-use crate::error::{error, HumancodeError, HumancodeErrorInfo};
+use crate::error::{
+    encode_buffer_doesnt_match_bits, encode_buffer_too_big, invalid_bits, invalid_ecc_len,
+    total_encode_len_too_long, HumancodeError,
+};
 use crate::smallbytebuf::SmallByteBuf;
 use core::fmt::{Debug, Display, Formatter};
 use libzbase32::low_level_decode::required_octets_buffer_len;
@@ -250,16 +253,16 @@ impl ChunkEncoder {
     /// be 0s or an error will be reported.
     pub fn encode_chunk(&self, data: &[u8], bits: u8) -> Result<EncodedChunk, HumancodeError> {
         if data.len() > 19 {
-            return Err(error(HumancodeErrorInfo::EncodeBufferTooBig));
+            return Err(encode_buffer_too_big());
         }
         if bits == 0 || bits > 150 {
-            return Err(error(HumancodeErrorInfo::InvalidBits));
+            return Err(invalid_bits());
         }
         if data.len()
             != required_octets_buffer_len(bits as u64)
                 .expect("required_octets_buffer_len() failed - which shouldn't be possible")
         {
-            return Err(error(HumancodeErrorInfo::EncodeBufferDoesntMatchBits));
+            return Err(encode_buffer_doesnt_match_bits());
         }
 
         let data_quintets_len = required_quintets_buffer_len(bits as u64)
@@ -267,7 +270,7 @@ impl ChunkEncoder {
         let total_len = data_quintets_len + self.ecc as usize;
 
         if total_len > 31 {
-            return Err(error(HumancodeErrorInfo::TotalEncodeLenTooLong));
+            return Err(total_encode_len_too_long());
         }
 
         let mut quintets_buffer = SmallByteBuf::new([0u8; 31], data_quintets_len as u8);
@@ -332,6 +335,6 @@ pub fn encode_chunk(data: &[u8], ecc: u8, bits: u8) -> Result<EncodedChunk, Huma
         28 => CHUNK_ENCODER_28.encode_chunk(data, bits),
         29 => CHUNK_ENCODER_29.encode_chunk(data, bits),
         30 => CHUNK_ENCODER_30.encode_chunk(data, bits),
-        _ => Err(error(HumancodeErrorInfo::InvalidECCLen)),
+        _ => Err(invalid_ecc_len()),
     }
 }
