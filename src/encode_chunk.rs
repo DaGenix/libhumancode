@@ -1,6 +1,6 @@
 use crate::error::{
     encode_buffer_doesnt_match_bits, encode_buffer_too_big, invalid_bits, invalid_ecc_len,
-    total_encode_len_too_long, HumancodeError,
+    total_encode_len_too_long, UsageError,
 };
 use crate::smallbytebuf::SmallByteBuf;
 use core::fmt::{Debug, Display, Formatter};
@@ -251,7 +251,7 @@ impl ChunkEncoder {
     /// `data` is encoded in a big-endian fashion. So, if `bits` is 1 - only the
     /// _highest_ bit of `data` will be encoded. All remaining bits of `data` must
     /// be 0s or an error will be reported.
-    pub fn encode_chunk(&self, data: &[u8], bits: u8) -> Result<EncodedChunk, HumancodeError> {
+    pub fn encode_chunk(&self, data: &[u8], bits: u8) -> Result<EncodedChunk, UsageError> {
         if data.len() > 19 {
             return Err(encode_buffer_too_big());
         }
@@ -302,7 +302,7 @@ impl ChunkEncoder {
 /// `data` is encoded in a big-endian fashion. So, if `bits` is 1 - only the
 /// _highest_ bit of `data` will be encoded. All remaining bits of `data` must
 /// be 0s or an error will be reported.
-pub fn encode_chunk(data: &[u8], ecc: u8, bits: u8) -> Result<EncodedChunk, HumancodeError> {
+pub fn encode_chunk(data: &[u8], ecc: u8, bits: u8) -> Result<EncodedChunk, UsageError> {
     match ecc {
         0 => CHUNK_ENCODER_0.encode_chunk(data, bits),
         1 => CHUNK_ENCODER_1.encode_chunk(data, bits),

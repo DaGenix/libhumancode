@@ -1,6 +1,6 @@
 use crate::error::{
     decode_buffer_smaller_than_ecc, decode_buffer_too_big, decode_buffer_wrong_size, invalid_bits,
-    invalid_ecc_len, too_many_errors, HumancodeError,
+    invalid_ecc_len, too_many_errors, DecodeError, UsageError,
 };
 use crate::smallbytebuf::SmallByteBuf;
 use crate::EncodedChunk;
@@ -148,7 +148,7 @@ impl ChunkDecoder {
     ///
     /// `encoded_data` should be validated for the correct length prior to being
     /// passed to this method. Incorrect lengths will result in errors of
-    /// type [`UsageError`](crate::HumancodeError::UsageError).
+    /// type [`UsageError`](crate::DecodeError::UsageError).
     ///
     /// On success, a tuple of [`DecodedChunk`] and an Optional [`EncodedChunk`]
     /// is returned. The `EncodedChunk` will only be a `Some` value if there was
@@ -158,16 +158,16 @@ impl ChunkDecoder {
         &self,
         encoded_data: &str,
         bits: u8,
-    ) -> Result<(DecodedChunk, Option<EncodedChunk>), HumancodeError> {
+    ) -> Result<(DecodedChunk, Option<EncodedChunk>), DecodeError> {
         if bits == 0 || bits > 150 {
-            return Err(invalid_bits());
+            return Err(invalid_bits().into());
         }
 
         fn convert_encoded_data_to_quintets(
             bits: u8,
             num_quintets: usize,
             encoded_data: &str,
-        ) -> Result<(SmallByteBuf<31>, SmallByteBuf<31>), HumancodeError> {
+        ) -> Result<(SmallByteBuf<31>, SmallByteBuf<31>), UsageError> {
             let mut out_buffer = [0u8; 31];
             let mut out_idx = 0;
             let mut erase_pos = [0u8; 31];
@@ -220,11 +220,11 @@ impl ChunkDecoder {
         let (quintet_buffer, erase_pos) =
             convert_encoded_data_to_quintets(bits, num_quintets, encoded_data)?;
         if quintet_buffer.len() <= self.ecc as usize {
-            return Err(decode_buffer_smaller_than_ecc());
+            return Err(decode_buffer_smaller_than_ecc().into());
         }
 
         if quintet_buffer.len() - self.ecc as usize != num_quintets {
-            return Err(decode_buffer_wrong_size());
+            return Err(decode_buffer_wrong_size().into());
         }
 
         let (out, err_count) = match self
@@ -278,7 +278,7 @@ impl ChunkDecoder {
 ///
 /// `encoded_data` should be validated for the correct length prior to being
 /// passed to this method. Incorrect lengths will result in errors of
-/// type [`UsageError`](crate::HumancodeError::UsageError).
+/// type [`UsageError`](crate::DecodeError::UsageError).
 ///
 /// `ecc` indicates the number of error correcting symbols to use and must
 /// match the value passed to `encode_chunk`.
@@ -291,7 +291,7 @@ pub fn decode_chunk(
     encoded_data: &str,
     ecc: u8,
     bits: u8,
-) -> Result<(DecodedChunk, Option<EncodedChunk>), HumancodeError> {
+) -> Result<(DecodedChunk, Option<EncodedChunk>), DecodeError> {
     match ecc {
         0 => CHUNK_DECODER_0.decode_chunk(encoded_data, bits),
         1 => CHUNK_DECODER_1.decode_chunk(encoded_data, bits),
@@ -324,6 +324,6 @@ pub fn decode_chunk(
         28 => CHUNK_DECODER_28.decode_chunk(encoded_data, bits),
         29 => CHUNK_DECODER_29.decode_chunk(encoded_data, bits),
         30 => CHUNK_DECODER_30.decode_chunk(encoded_data, bits),
-        _ => Err(invalid_ecc_len()),
+        _ => Err(invalid_ecc_len().into()),
     }
 }

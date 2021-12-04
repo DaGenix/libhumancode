@@ -1,27 +1,5 @@
 use core::fmt::{Debug, Display, Formatter};
 
-/// An `InputErrorCause` can be formatted to get a string
-/// explaining the error.
-///
-/// Currently, there is only one input error message
-/// (that there were too many errors) but more could be added
-/// in the future.
-pub struct InputErrorCause {
-    __hidden: (),
-}
-
-impl Debug for InputErrorCause {
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(f, "There were too many errors in the data to decode")
-    }
-}
-
-impl Display for InputErrorCause {
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        Debug::fmt(self, f)
-    }
-}
-
 enum UsageErrorType {
     // Decoder or Encoder errors
     InvalidECCLen,
@@ -65,89 +43,115 @@ impl Display for UsageErrorCause {
     }
 }
 
-/// Common error type used by all fallible operations
+/// Error type used by decode operations
 ///
 /// By design, this type is mostly opaque - with the exception
-/// that its possible to differentiate between errors with input
-/// data and other types of errors. The [`Debug`] or [`Display`]
-/// implementations can be used to format a more specific error
-/// message.
-pub enum HumancodeError {
-    /// An InputError indicates that an input array contained an invalid
-    /// value. For example, an invalid character being passed to
-    /// the [`decode_chunk`](crate::decode_chunk()) method.
-    InputError(InputErrorCause),
+/// that its possible to differentiate between the input being
+/// invalid (having too many errors) and using the API incorrectly.
+/// The [`Debug`] or [`Display`] implementations can be used to
+/// format a more specific error message.
+pub enum DecodeError {
+    /// The input had too many errors and couldn't be decoded
+    TooManyErrors,
 
     /// A UsageError indicates an error outside of an invalid input value.
     UsageError(UsageErrorCause),
 }
 
-impl Debug for HumancodeError {
+impl Debug for DecodeError {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         match self {
-            HumancodeError::InputError(cause) => write!(f, "Input Error: {}", cause),
-            HumancodeError::UsageError(cause) => write!(f, "Usage Error: {}", cause),
+            DecodeError::TooManyErrors => write!(f, "There were too many errors in the input"),
+            DecodeError::UsageError(cause) => write!(f, "Usage Error: {}", cause),
         }
     }
 }
 
-impl Display for HumancodeError {
+impl Display for DecodeError {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         Debug::fmt(self, f)
     }
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for HumancodeError {}
+impl std::error::Error for DecodeError {}
 
-pub const fn too_many_errors() -> HumancodeError {
-    HumancodeError::InputError(InputErrorCause { __hidden: () })
+impl From<UsageError> for DecodeError {
+    fn from(UsageError(cause): UsageError) -> Self {
+        DecodeError::UsageError(cause)
+    }
 }
 
-pub const fn invalid_ecc_len() -> HumancodeError {
-    HumancodeError::UsageError(UsageErrorCause {
+/// Error type to indicate that an API was used incorrectly
+///
+/// By design, this type is mostly opaque. The [`Debug`] or [`Display`]
+/// implementations can be used to format a more specific error
+/// message.
+pub struct UsageError(pub UsageErrorCause);
+
+impl Debug for UsageError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        Debug::fmt(&self.0, f)
+    }
+}
+
+impl Display for UsageError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        Debug::fmt(self, f)
+    }
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for UsageError {}
+
+pub const fn too_many_errors() -> DecodeError {
+    DecodeError::TooManyErrors
+}
+
+pub const fn invalid_ecc_len() -> UsageError {
+    UsageError(UsageErrorCause {
         typ: UsageErrorType::InvalidECCLen,
     })
 }
 
-pub const fn invalid_bits() -> HumancodeError {
-    HumancodeError::UsageError(UsageErrorCause {
+pub const fn invalid_bits() -> UsageError {
+    UsageError(UsageErrorCause {
         typ: UsageErrorType::InvalidBits,
     })
 }
 
-pub const fn encode_buffer_too_big() -> HumancodeError {
-    HumancodeError::UsageError(UsageErrorCause {
+pub const fn encode_buffer_too_big() -> UsageError {
+    UsageError(UsageErrorCause {
         typ: UsageErrorType::EncodeBufferTooBig,
     })
 }
 
-pub const fn encode_buffer_doesnt_match_bits() -> HumancodeError {
-    HumancodeError::UsageError(UsageErrorCause {
+pub const fn encode_buffer_doesnt_match_bits() -> UsageError {
+    UsageError(UsageErrorCause {
         typ: UsageErrorType::EncodeBufferDoesntMatchBits,
     })
 }
 
-pub const fn total_encode_len_too_long() -> HumancodeError {
-    HumancodeError::UsageError(UsageErrorCause {
+pub const fn total_encode_len_too_long() -> UsageError {
+    UsageError(UsageErrorCause {
         typ: UsageErrorType::TotalEncodeLenTooLong,
     })
 }
 
-pub const fn decode_buffer_too_big() -> HumancodeError {
-    HumancodeError::UsageError(UsageErrorCause {
+pub const fn decode_buffer_too_big() -> UsageError {
+    UsageError(UsageErrorCause {
         typ: UsageErrorType::DecodeBufferTooBig,
     })
 }
 
-pub const fn decode_buffer_smaller_than_ecc() -> HumancodeError {
-    HumancodeError::UsageError(UsageErrorCause {
+pub const fn decode_buffer_smaller_than_ecc() -> UsageError {
+    UsageError(UsageErrorCause {
         typ: UsageErrorType::DecodeBufferSmallerThanEcc,
     })
 }
 
-pub const fn decode_buffer_wrong_size() -> HumancodeError {
-    HumancodeError::UsageError(UsageErrorCause {
+pub const fn decode_buffer_wrong_size() -> UsageError {
+    UsageError(UsageErrorCause {
         typ: UsageErrorType::DecodeBufferWrongSize,
     })
 }

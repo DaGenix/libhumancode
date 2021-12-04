@@ -73,7 +73,7 @@ mod tests;
 
 pub use decode_chunk::{decode_chunk, DecodedChunk};
 pub use encode_chunk::{encode_chunk, EncodedChunk, EncodedChunkPretty, EncodedChunkRaw};
-pub use error::{HumancodeError, InputErrorCause, UsageErrorCause};
+pub use error::{DecodeError, UsageError, UsageErrorCause};
 
 pub mod decoder {
     //! Using the [`ChunkDecoder`] interfaces in this module _may_ allow for a smaller binary size
