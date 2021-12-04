@@ -252,10 +252,10 @@ impl ChunkEncoder {
     /// _highest_ bit of `data` will be encoded. All remaining bits of `data` must
     /// be 0s or an error will be reported.
     pub fn encode_chunk(&self, data: &[u8], bits: u8) -> Result<EncodedChunk, UsageError> {
-        if data.len() > 19 {
+        if data.len() > 20 {
             return Err(encode_buffer_too_big());
         }
-        if bits == 0 || bits > 150 {
+        if bits == 0 || bits > 155 {
             return Err(invalid_bits());
         }
         if data.len()

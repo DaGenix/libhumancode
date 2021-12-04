@@ -102,7 +102,7 @@ pub const CHUNK_DECODER_30: ChunkDecoder =
 /// access the underlying bytes.
 #[derive(Copy, Clone)]
 pub struct DecodedChunk {
-    buf: SmallByteBuf<19>,
+    buf: SmallByteBuf<20>,
 }
 
 impl DecodedChunk {
@@ -159,7 +159,7 @@ impl ChunkDecoder {
         encoded_data: &str,
         bits: u8,
     ) -> Result<(DecodedChunk, Option<EncodedChunk>), DecodeError> {
-        if bits == 0 || bits > 150 {
+        if bits == 0 || bits > 155 {
             return Err(invalid_bits().into());
         }
 
@@ -244,7 +244,7 @@ impl ChunkDecoder {
         let decoded_data_len = required_octets_buffer_len(bits as u64)
             .expect("required_octets_buffer_len() failed - which shouldn't be possible");
         let mut decoded_chunk = DecodedChunk {
-            buf: SmallByteBuf::new([0u8; 19], decoded_data_len as u8),
+            buf: SmallByteBuf::new([0u8; 20], decoded_data_len as u8),
         };
 
         if err_count > 0 || erase_pos.len() > 0 {
