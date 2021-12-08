@@ -288,7 +288,7 @@ impl ChunkEncoder {
 
 /// Encode a chunk of input data
 ///
-/// `data` must be at least 1 byte long, but no longer than 19 bytes.
+/// `data` must be at least 1 byte long, but no longer than 20 bytes.
 ///
 /// `ecc` indicates the number of error correcting symbols to use and must
 /// between 0 and 30, inclusive.
