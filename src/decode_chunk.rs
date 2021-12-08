@@ -9,7 +9,7 @@ use libzbase32::low_level_decode::{
     character_to_quintet, is_last_quintet_valid, quintets_to_octets, required_octets_buffer_len,
 };
 use libzbase32::low_level_encode::required_quintets_buffer_len;
-use libzbase32::ZBase32Error;
+use libzbase32::InputError;
 use reed_solomon_32::decoder as reed_solomoon_decoder;
 
 /// [`ChunkDecoder`] for messages with no error correcting symbols
@@ -194,14 +194,14 @@ impl ChunkDecoder {
                             out_buffer[out_idx] = x;
                         }
                     }
-                    Err(ZBase32Error::InputError(_)) => {
+                    Err(InputError::InputError(_)) => {
                         // If the input character is invalid, we can record
                         // it as an erasure which helps when we apply error
                         // correction later.
                         erase_pos[erase_pos_size] = out_idx as u8;
                         erase_pos_size += 1;
                     }
-                    Err(ZBase32Error::UsageError(_)) => {
+                    Err(InputError::UsageError(_)) => {
                         unreachable!("This shouldn't be possible")
                     }
                 };
