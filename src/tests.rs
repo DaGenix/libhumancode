@@ -54,13 +54,10 @@ fn test_encode_all_length_combos() {
             let data = [0x80; 31];
             let data = &data[0..(data_bits_len + 7) / 8];
 
-            let expected_ok = data_bits_len + ecc_len * 5 <= 155 && ecc_len < 31 && data_bits_len > 0;
+            let expected_ok =
+                data_bits_len + ecc_len * 5 <= 155 && ecc_len < 31 && data_bits_len > 0;
 
-            let encode_result = encode_chunk(
-                data,
-                ecc_len as u8,
-                data_bits_len as u8,
-            );
+            let encode_result = encode_chunk(data, ecc_len as u8, data_bits_len as u8);
 
             assert_eq!(expected_ok, encode_result.is_ok());
 
