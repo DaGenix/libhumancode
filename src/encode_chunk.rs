@@ -240,7 +240,7 @@ impl ChunkEncoder {
 
     /// Encode a chunk of input data
     ///
-    /// `data` must be at least 1 byte long, but no longer than 19 bytes.
+    /// `data` must be at least 1 byte long, but no longer than 20 bytes.
     ///
     /// `bits` indicates the number of bits to encode from `data`. `data` must
     /// have a minimal length given the number of `bits`. For example, if `bits`
