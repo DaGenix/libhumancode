@@ -77,3 +77,18 @@ fn test_encode_all_length_combos() {
         }
     }
 }
+
+#[test]
+fn decode_edgecase_1() {
+    let encoded = "yyyy-yyyy-yyyy-yyyy-yyyy-yyyy-yyyy-xxx";
+    let result = decode_chunk(encoded, 30, 1);
+    assert!(result.is_ok());
+}
+
+#[test]
+fn decode_edgecase_2() {
+    let encoded = "yyyy-yyyy-yyyy-yyyy-yyyy-yyyy-yyyy-xxx";
+    let result = decode_chunk(encoded, 3, 140);
+    assert!(result.is_ok());
+}
+
