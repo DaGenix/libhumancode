@@ -92,3 +92,9 @@ fn decode_edgecase_2() {
     assert!(result.is_ok());
 }
 
+#[test]
+fn encode_failure_with_nonzero_trailing_bits() {
+    let data = [0xff; 4];
+    let result = encode_chunk(&data, 4, 31);
+    assert!(result.is_err())
+}

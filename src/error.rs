@@ -9,6 +9,7 @@ enum UsageErrorType {
     EncodeBufferTooBig,
     EncodeBufferDoesntMatchBits,
     TotalEncodeLenTooLong,
+    NonzeroTrailingBits,
 
     // Decoder errors
     DecodeBufferTooBig,
@@ -30,6 +31,7 @@ impl Debug for UsageErrorCause {
             UsageErrorType::EncodeBufferTooBig => write!(f, "The buffer to encode must be no larger than 20 bytes (up to 155 bits of that can be encoded)"),
             UsageErrorType::EncodeBufferDoesntMatchBits => write!(f, "The size of the encode buffer didn't match the bits parameter"),
             UsageErrorType::TotalEncodeLenTooLong => write!(f, "The size of encoded data after adding ECC symbols would exceed 31 characters"),
+            UsageErrorType::NonzeroTrailingBits => write!(f, "The buffer to encode had non-zero trailing bits - check the value of the bits parameter"),
             UsageErrorType::DecodeBufferTooBig => write!(f, "The buffer to decode contained more than 31 encoded characters"),
             UsageErrorType::DecodeBufferSmallerThanEcc => write!(f, "The buffer to decode was smaller than the number of ECC symbols"),
             UsageErrorType::DecodeBufferWrongSize => write!(f, "The size of the decode buffer didn't match the bits parameter"),
@@ -135,6 +137,12 @@ pub const fn encode_buffer_doesnt_match_bits() -> UsageError {
 pub const fn total_encode_len_too_long() -> UsageError {
     UsageError(UsageErrorCause {
         typ: UsageErrorType::TotalEncodeLenTooLong,
+    })
+}
+
+pub const fn encode_buffer_had_nonzero_trailing_bits() -> UsageError {
+    UsageError(UsageErrorCause {
+        typ: UsageErrorType::NonzeroTrailingBits,
     })
 }
 
