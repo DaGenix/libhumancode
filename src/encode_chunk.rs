@@ -1,8 +1,13 @@
-use crate::error::{encode_buffer_doesnt_match_bits, encode_buffer_had_nonzero_trailing_bits, encode_buffer_too_big, invalid_bits, invalid_ecc_len, total_encode_len_too_long, UsageError};
+use crate::error::{
+    encode_buffer_doesnt_match_bits, encode_buffer_had_nonzero_trailing_bits,
+    encode_buffer_too_big, invalid_bits, invalid_ecc_len, total_encode_len_too_long, UsageError,
+};
 use crate::smallbytebuf::SmallByteBuf;
 use core::fmt::{Debug, Display, Formatter};
 use libzbase32::low_level_decode::required_octets_buffer_len;
-use libzbase32::low_level_encode::{is_last_octet_valid, octets_to_quintets, quintet_to_character, required_quintets_buffer_len};
+use libzbase32::low_level_encode::{
+    is_last_octet_valid, octets_to_quintets, quintet_to_character, required_quintets_buffer_len,
+};
 use reed_solomon_32::encoder as reed_solomoon_encoder;
 
 /// [`ChunkEncoder`] for messages with no error correcting symbols
