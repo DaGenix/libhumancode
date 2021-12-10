@@ -1,0 +1,14 @@
+[package]
+name = "libhumancode"
+version = "1.0.0"
+edition = "2018"
+publish = false
+
+[lib]
+name = "libhumancode"
+crate-type = ["cdylib"]
+
+[dependencies]
+libhumancode = {git = "https://github.com/DaGenix/libhumancode", branch = "3.0"}
+pyo3 = { version = "0.15.1", features = ["extension-module", "abi3", "abi3-py36"] }
+
