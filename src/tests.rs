@@ -10,8 +10,8 @@ fn test_happy_path() {
     let encoded = encode_chunk(VALUE, 5, 128).unwrap().raw();
     assert_eq!(encoded.as_str(), CODE);
 
-    let (decoded, _) = decode_chunk(encoded.as_str(), 5, 128).unwrap();
-    assert_eq!(decoded.as_bytes(), VALUE);
+    let decode_output = decode_chunk(encoded.as_str(), 5, 128).unwrap();
+    assert_eq!(decode_output.data(), VALUE);
 }
 
 #[test]
@@ -26,8 +26,8 @@ fn test_erasures() {
     let encoded = encode_chunk(VALUE, 5, 128).unwrap().raw();
     assert_eq!(encoded.as_str(), GOOD_CODE);
 
-    let (decoded, _) = decode_chunk(BAD_CODE, 5, 128).unwrap();
-    assert_eq!(decoded.as_bytes(), VALUE);
+    let decode_output = decode_chunk(BAD_CODE, 5, 128).unwrap();
+    assert_eq!(decode_output.data(), VALUE);
 }
 
 #[test]
@@ -43,8 +43,8 @@ fn test_invalid_trailing_octet() {
     let encoded = encode_chunk(VALUE, 5, 128).unwrap().raw();
     assert_eq!(encoded.as_str(), GOOD_CODE);
 
-    let (decoded, _) = decode_chunk(BAD_CODE, 5, 128).unwrap();
-    assert_eq!(decoded.as_bytes(), VALUE);
+    let decode_output = decode_chunk(BAD_CODE, 5, 128).unwrap();
+    assert_eq!(decode_output.data(), VALUE);
 }
 
 #[test]
@@ -69,7 +69,7 @@ fn test_encode_all_length_combos() {
                 );
 
                 assert!(decode_result.is_ok());
-                assert_eq!(&data, &decode_result.unwrap().0.as_bytes());
+                assert_eq!(&data, &decode_result.unwrap().data());
             }
         }
     }

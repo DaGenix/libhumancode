@@ -4,7 +4,7 @@ use crate::error::{
 };
 use crate::smallbytebuf::SmallByteBuf;
 use crate::EncodedChunk;
-use core::fmt::{Debug, Formatter};
+use core::fmt::Debug;
 use libzbase32::low_level_decode::{
     character_to_quintet, is_last_quintet_valid, quintets_to_octets, required_octets_buffer_len,
 };
@@ -96,31 +96,33 @@ pub const CHUNK_DECODER_29: ChunkDecoder =
 pub const CHUNK_DECODER_30: ChunkDecoder =
     ChunkDecoder::new(&reed_solomoon_decoder::DECODER_30, 30);
 
-/// A decoded chunk of bytes
-///
-/// The [`as_bytes`](DecodedChunk::as_bytes) method can be used to
-/// access the underlying bytes.
-#[derive(Copy, Clone)]
-pub struct DecodedChunk {
-    buf: SmallByteBuf<20>,
+/// The result of a successful decode_chunk operation
+#[derive(Debug, Clone, Copy)]
+pub struct DecodeOutput {
+    data_buf: SmallByteBuf<20>,
+    had_errors: bool,
+    quintet_buffer: SmallByteBuf<31>,
 }
 
-impl DecodedChunk {
-    /// Get the underlying decoded bytes
-    pub fn as_bytes(&self) -> &[u8] {
-        self.buf.as_bytes()
+impl DecodeOutput {
+    /// Get the decoded (and corrected) data value
+    pub fn data(&self) -> &[u8] {
+        self.data_buf.as_bytes()
     }
-}
 
-impl AsRef<[u8]> for DecodedChunk {
-    fn as_ref(&self) -> &[u8] {
-        self.as_bytes()
+    /// Returns `true` if there were errors in the code that were
+    /// corrected
+    pub fn had_errors(&self) -> bool {
+        self.had_errors
     }
-}
 
-impl Debug for DecodedChunk {
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{:?}", self.as_bytes())
+    /// Get the value of the encoded string _after_ corrections
+    /// have been applied.
+    ///
+    /// This is useful in order to ask the user if the corrections
+    /// were accurate.
+    pub fn corrected_chunk(&self) -> EncodedChunk {
+        EncodedChunk::from_quintet_buffer(self.quintet_buffer.as_bytes())
     }
 }
 
@@ -150,15 +152,8 @@ impl ChunkDecoder {
     /// passed to this method. Incorrect lengths will result in errors of
     /// type [`UsageError`](crate::DecodeError::UsageError).
     ///
-    /// On success, a tuple of [`DecodedChunk`] and an Optional [`EncodedChunk`]
-    /// is returned. The `EncodedChunk` will only be a `Some` value if there was
-    /// an error in the input that was corrected. It is strongly recommended that
-    /// the user be prompted to review any errors.
-    pub fn decode_chunk(
-        &self,
-        encoded_data: &str,
-        bits: u8,
-    ) -> Result<(DecodedChunk, Option<EncodedChunk>), DecodeError> {
+    /// On success, a [`DecodeOutput`] value is returned.
+    pub fn decode_chunk(&self, encoded_data: &str, bits: u8) -> Result<DecodeOutput, DecodeError> {
         if bits == 0 || bits > 155 {
             return Err(invalid_bits().into());
         }
@@ -235,17 +230,11 @@ impl ChunkDecoder {
             Err(_) => return Err(too_many_errors()),
         };
 
-        let corrected_chunk = if err_count > 0 || erase_pos.len() > 0 {
-            Some(EncodedChunk::from_quintet_buffer(&out))
-        } else {
-            None
-        };
+        let quintet_buffer = SmallByteBuf::from([0u8; 31], &out);
 
         let decoded_data_len = required_octets_buffer_len(bits as u64)
             .expect("required_octets_buffer_len() failed - which shouldn't be possible");
-        let mut decoded_chunk = DecodedChunk {
-            buf: SmallByteBuf::new([0u8; 20], decoded_data_len as u8),
-        };
+        let mut data_buf = SmallByteBuf::new([0u8; 20], decoded_data_len as u8);
 
         if err_count > 0 || erase_pos.len() > 0 {
             // If we have some errors, then its possible that our corrected code
@@ -262,10 +251,14 @@ impl ChunkDecoder {
         // This function only fails if the quintets are invalid (ie, >31) or if the final
         // quintet is not valid for the given bits value. We've already ensured that
         // neither of those things can be true, so, this shouldn't be able to fail.
-        quintets_to_octets(out.data(), decoded_chunk.buf.as_mut_bytes(), bits as u64)
+        quintets_to_octets(out.data(), data_buf.as_mut_bytes(), bits as u64)
             .expect("quintets_to_octets() failed - which shouldn't be possible");
 
-        Ok((decoded_chunk, corrected_chunk))
+        Ok(DecodeOutput {
+            data_buf,
+            had_errors: err_count > 0 || erase_pos.len() > 0,
+            quintet_buffer,
+        })
     }
 }
 
@@ -283,15 +276,8 @@ impl ChunkDecoder {
 /// `ecc` indicates the number of error correcting symbols to use and must
 /// match the value passed to `encode_chunk`.
 ///
-/// On success, a tuple of [`DecodedChunk`] and an Optional [`EncodedChunk`]
-/// is returned. The `EncodedChunk` will only be a `Some` value if there was
-/// an error in the input that was corrected. It is strongly recommended that
-/// the user be prompted to review any errors.
-pub fn decode_chunk(
-    encoded_data: &str,
-    ecc: u8,
-    bits: u8,
-) -> Result<(DecodedChunk, Option<EncodedChunk>), DecodeError> {
+/// On success, a [`DecodeOutput`] value is returned.
+pub fn decode_chunk(encoded_data: &str, ecc: u8, bits: u8) -> Result<DecodeOutput, DecodeError> {
     match ecc {
         0 => CHUNK_DECODER_0.decode_chunk(encoded_data, bits),
         1 => CHUNK_DECODER_1.decode_chunk(encoded_data, bits),

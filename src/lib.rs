@@ -39,10 +39,11 @@
 //!
 //!     assert_eq!(encoded_pretty.as_str(), CORRECT_CODE);
 //!
-//!     let (decoded, corrected) = decode_chunk(INVALID_CODE, ECC_SYMBOLS, BITS).unwrap();
+//!     let decode_output = decode_chunk(INVALID_CODE, ECC_SYMBOLS, BITS).unwrap();
 //!
-//!     assert_eq!(decoded.as_bytes(), DATA);
-//!     assert_eq!(corrected.unwrap().pretty().as_str(), CORRECT_CODE);
+//!     assert_eq!(decode_output.data(), DATA);
+//!     assert_eq!(decode_output.had_errors(), true);
+//!     assert_eq!(decode_output.corrected_chunk().pretty().as_str(), CORRECT_CODE);
 //! }
 //! ```
 //!
@@ -71,7 +72,7 @@ mod smallbytebuf;
 #[cfg(test)]
 mod tests;
 
-pub use decode_chunk::{decode_chunk, DecodedChunk};
+pub use decode_chunk::{decode_chunk, DecodeOutput};
 pub use encode_chunk::{encode_chunk, EncodedChunk, EncodedChunkPretty, EncodedChunkRaw};
 pub use error::{DecodeError, UsageError, UsageErrorCause};
 
