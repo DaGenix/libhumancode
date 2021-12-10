@@ -15,7 +15,7 @@ to enode binary data up to 150 bits in a human friendly format.
 categories = ["algorithms"]
 
 [dependencies]
-libzbase32 = {version = "2.0.0", default-features = false }
+libzbase32 = {git = "https://github.com/DaGenix/libzbase32", branch = "3.0", default-features = false }
 reed-solomon-32 = {version = "2.0.0", default-features = false }
 
 [features]
