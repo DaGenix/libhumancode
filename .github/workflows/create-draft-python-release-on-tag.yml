@@ -1,0 +1,77 @@
+name: Create Python Release
+
+on:
+  push:
+    tags:
+      - "py-*"
+
+jobs:
+  wheel:
+    name: Python ${{ matrix.python-version }}, ${{ matrix.platform.name }}
+    runs-on: ${{ matrix.platform.os }}
+    strategy:
+      matrix:
+        platform: [
+          { os: "macOS-latest", python-architecture: "x64", rust-target: "x86_64-apple-darwin", name: "macOS x64", python-version: 3.7 },
+          { os: "macOS-11", python-architecture: "x64", rust-target: "aarch64-apple-darwin", name: "macOS ARM", python-version: 3.8 },
+          { os: "windows-latest", python-architecture: "x64", rust-target: "x86_64-pc-windows-msvc", name: "Windows x86", python-version: 3.6 },
+          { os: "windows-latest", python-architecture: "x86", rust-target: "i686-pc-windows-msvc", name: "Windows x64", python-version: 3.6 },
+        ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.platform.python-version }}
+          architecture: ${{ matrix.platform.python-architecture }}
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.platform.rust-target }}
+          default: true
+          profile: minimal
+      - name: install maturin
+        run: pip install maturin
+      - name: build wheel
+        working-directory: bindings/py/
+        run: maturin build --release --no-sdist --target ${{ matrix.platform.rust-target }}
+      - name: build sdist
+        working-directory: bindings/py/
+        run: maturin sdist
+        if: matrix.platform.os == 'macOS-latest'
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: wheels
+          path: bindings/py/target/wheels/*
+
+  wheel-docker:
+    name: Python Linux Wheels
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build wheels
+        working-directory: bindings/py/
+        run: ./build-linux-wheels.sh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: wheels
+          path: bindings/py/target/wheels/*
+
+  create-release:
+    name: Create Release
+    needs: [wheel-docker, wheel]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch wheels to upload
+        uses: actions/download-artifact@v2
+        with:
+          name: wheels
+          path: dist
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          files: dist/*
