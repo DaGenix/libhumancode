@@ -61,7 +61,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          path: bindings/py/target/wheel/*.whl
+          path: bindings/py/target/wheels/*.whl
 #        run: python -u .github/workflows/maturin_build_wheel.py
 #      - name: install PyGithub
 #        run: pip install PyGithub
