@@ -58,6 +58,10 @@ jobs:
         id: build_wheel
         working-directory: bindings/py/
         run: maturin build --release --target ${{ matrix.platform.rust-target }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: bindings/py/target/wheel/*.whl
 #        run: python -u .github/workflows/maturin_build_wheel.py
 #      - name: install PyGithub
 #        run: pip install PyGithub
