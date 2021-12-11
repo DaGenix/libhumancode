@@ -41,7 +41,7 @@ jobs:
         with:
           python-version: ${{ matrix.platform.python-version }}
           architecture: ${{ matrix.platform.python-architecture }}
-        if: matrix.platform.os == 'windows-latest'
+#        if: matrix.platform.os == 'windows-latest'
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
