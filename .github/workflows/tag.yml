@@ -15,11 +15,10 @@ jobs:
       matrix:
         platform: [
           # This list should be kept in sync with push.yml.
-#          { os: "ubuntu-latest",  python-architecture: "x64", rust-target: "x86_64-unknown-linux-gnu", name: "Linux x64", python-version: 3.6 },
-          { os: "macOS-latest",   python-architecture: "x64", rust-target: "x86_64-apple-darwin",      name: "macOS x64", python-version: 3.7 },
-          { os: "macOS-11",   python-architecture: "x64", rust-target: "aarch64-apple-darwin",     name: "macOS ARM", python-version: 3.8 },
-#          { os: "windows-latest", python-architecture: "x64", rust-target: "x86_64-pc-windows-msvc", name: "Windows x86", python-version: 3.6 },
-#          { os: "windows-latest", python-architecture: "x86", rust-target: "i686-pc-windows-msvc", name: "Windows x64", python-version: 3.6 },
+          { os: "macOS-latest", python-architecture: "x64", rust-target: "x86_64-apple-darwin", name: "macOS x64", python-version: 3.7 },
+          { os: "macOS-11", python-architecture: "x64", rust-target: "aarch64-apple-darwin", name: "macOS ARM", python-version: 3.8 },
+          { os: "windows-latest", python-architecture: "x64", rust-target: "x86_64-pc-windows-msvc", name: "Windows x86", python-version: 3.6 },
+          { os: "windows-latest", python-architecture: "x86", rust-target: "i686-pc-windows-msvc", name: "Windows x64", python-version: 3.6 },
         ]
 #        exclude:
 #          # aarch64 macOS has no support for Python version lower than 3.8
@@ -32,8 +31,8 @@ jobs:
 #              os: "macOS-11"
 #              rust-target: "aarch64-apple-darwin"
 #      fail-fast: false
-    env:
-      CARGO_BUILD_TARGET: ${{ matrix.platform.rust-target }}
+#    env:
+#      CARGO_BUILD_TARGET: ${{ matrix.platform.rust-target }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -41,7 +40,6 @@ jobs:
         with:
           python-version: ${{ matrix.platform.python-version }}
           architecture: ${{ matrix.platform.python-architecture }}
-#        if: matrix.platform.os == 'windows-latest'
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -51,12 +49,10 @@ jobs:
           profile: minimal
       - name: install maturin
         run: pip install maturin
-        # On Linux we'll run Maturin in a Docker container.
-        if: matrix.platform.os != 'ubuntu-latest'
       - name: build wheel
         id: build_wheel
         working-directory: bindings/py/
-        run: maturin build --release --target ${{ matrix.platform.rust-target }}
+        run: maturin build --release --no-sdist --target ${{ matrix.platform.rust-target }}
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
@@ -69,3 +65,17 @@ jobs:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #          GITHUB_TAG: ${{ github.ref }}
 #        run: python -u .github/workflows/upload_github_release_asset.py ${{ steps.build_wheel.outputs.wheel_path }}
+
+  wheel-docker:
+    name: Python ${{ matrix.python-version }}, ${{ matrix.platform.name }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build wheel
+        id: build_wheel
+        working-directory: bindings/py/
+        run: ./build-all.sh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: bindings/py/target/wheels/*.whl
