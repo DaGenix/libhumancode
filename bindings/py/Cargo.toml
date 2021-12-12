@@ -1,5 +1,6 @@
 [package]
 name = "libhumancode"
+description = "libhumancode bindings for python"
 version = "1.0.0"
 edition = "2018"
 publish = false
