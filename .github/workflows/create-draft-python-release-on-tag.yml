@@ -46,20 +46,20 @@ jobs:
           name: wheels
           path: bindings/py/target/wheels/*
 
-  wheel-docker:
-    name: Python Linux Wheels
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: build wheels
-        id: build_wheel
-        working-directory: bindings/py/
-        run: ./build-all.sh
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: wheels
-          path: bindings/py/target/wheels/*
+#  wheel-docker:
+#    name: Python Linux Wheels
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: build wheels
+#        id: build_wheel
+#        working-directory: bindings/py/
+#        run: ./build-all.sh
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: wheels
+#          path: bindings/py/target/wheels/*
 
   create-release:
     name: Create Release
