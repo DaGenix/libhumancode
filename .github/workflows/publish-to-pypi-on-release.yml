@@ -13,6 +13,7 @@ jobs:
       - name: Download files from the release
         uses: robinraju/release-downloader@v1.3
         with:
+          repository: DaGenix/libhumancode
           tag: ${{ github.ref }}
           fileName: "*"
           tarBall: false
