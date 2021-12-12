@@ -7,7 +7,7 @@ on:
 jobs:
   create-release:
     name: Create Release
-    if: startsWith(github.ref, 'refs/tags/py-') && github.event.release.draft == false && github.event.release.prerelease == false
+    if: startsWith(github.ref, 'refs/tags/py-') && !github.event.release.draft && !github.event.release.prerelease
     runs-on: ubuntu-latest
     steps:
       - name: Download files from the release
