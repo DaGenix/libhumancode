@@ -11,13 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: DEBUG
-        run: echo ${{ toJSON(github.event) }}
+        run: echo "${{ toJSON(github.event) }}"
       - name: DEBUG2
-        run: echo ${{ startsWith(github.ref, 'refs/tags/py-') }}
+        run: echo "${{ startsWith(github.ref, 'refs/tags/py-') }}"
       - name: DEBUG3
-        run: echo ${{ !github.event.release.draft }}
+        run: echo "${{ !github.event.release.draft }}"
       - name: DEBUG4
-        run: echo ${{ !github.event.release.prerelease }}
+        run: echo "${{ !github.event.release.prerelease }}"
+      - name: DEBUG5
+        run: echo "${{ startsWith(github.ref, 'refs/tags/py-') && !github.event.release.draft && !github.event.release.prerelease }}"
       - name: Download files from the release
         uses: robinraju/release-downloader@v1.3
         with:
