@@ -7,10 +7,10 @@ fn test_happy_path() {
         153, 45, 218, 14, 206, 250, 84, 8, 62, 103, 131, 200, 89, 121, 73, 236,
     ];
 
-    let encoded = encode_chunk(VALUE, 5, 128).unwrap().raw();
+    let encoded = encode_chunk(VALUE, 128, 5).unwrap().raw();
     assert_eq!(encoded.as_str(), CODE);
 
-    let decode_output = decode_chunk(encoded.as_str(), 5, 128).unwrap();
+    let decode_output = decode_chunk(encoded.as_str(), 128, 5).unwrap();
     assert_eq!(decode_output.data(), VALUE);
 }
 
@@ -23,10 +23,10 @@ fn test_erasures() {
         153, 45, 218, 14, 206, 250, 84, 8, 62, 103, 131, 200, 89, 121, 73, 236,
     ];
 
-    let encoded = encode_chunk(VALUE, 5, 128).unwrap().raw();
+    let encoded = encode_chunk(VALUE, 128, 5).unwrap().raw();
     assert_eq!(encoded.as_str(), GOOD_CODE);
 
-    let decode_output = decode_chunk(BAD_CODE, 5, 128).unwrap();
+    let decode_output = decode_chunk(BAD_CODE, 128, 5).unwrap();
     assert_eq!(decode_output.data(), VALUE);
 }
 
@@ -40,10 +40,10 @@ fn test_invalid_trailing_octet() {
         153, 45, 218, 14, 206, 250, 84, 8, 62, 103, 131, 200, 89, 121, 73, 236,
     ];
 
-    let encoded = encode_chunk(VALUE, 5, 128).unwrap().raw();
+    let encoded = encode_chunk(VALUE, 128, 5).unwrap().raw();
     assert_eq!(encoded.as_str(), GOOD_CODE);
 
-    let decode_output = decode_chunk(BAD_CODE, 5, 128).unwrap();
+    let decode_output = decode_chunk(BAD_CODE, 128, 5).unwrap();
     assert_eq!(decode_output.data(), VALUE);
 }
 
@@ -57,15 +57,15 @@ fn test_encode_all_length_combos() {
             let expected_ok =
                 data_bits_len + ecc_len * 5 <= 155 && ecc_len < 31 && data_bits_len > 0;
 
-            let encode_result = encode_chunk(data, ecc_len as u8, data_bits_len as u8);
+            let encode_result = encode_chunk(data, data_bits_len as u8, ecc_len as u8);
 
             assert_eq!(expected_ok, encode_result.is_ok());
 
             if expected_ok {
                 let decode_result = decode_chunk(
                     &encode_result.unwrap().pretty().as_str(),
-                    ecc_len as u8,
                     data_bits_len as u8,
+                    ecc_len as u8,
                 );
 
                 assert!(decode_result.is_ok());
@@ -78,20 +78,20 @@ fn test_encode_all_length_combos() {
 #[test]
 fn decode_edgecase_1() {
     let encoded = "yyyy-yyyy-yyyy-yyyy-yyyy-yyyy-yyyy-xxx";
-    let result = decode_chunk(encoded, 30, 1);
+    let result = decode_chunk(encoded, 1, 30);
     assert!(result.is_ok());
 }
 
 #[test]
 fn decode_edgecase_2() {
     let encoded = "yyyy-yyyy-yyyy-yyyy-yyyy-yyyy-yyyy-xxx";
-    let result = decode_chunk(encoded, 3, 140);
+    let result = decode_chunk(encoded, 140, 3);
     assert!(result.is_ok());
 }
 
 #[test]
 fn encode_failure_with_nonzero_trailing_bits() {
     let data = [0xff; 4];
-    let result = encode_chunk(&data, 4, 31);
+    let result = encode_chunk(&data, 31, 4);
     assert!(result.is_err())
 }

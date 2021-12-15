@@ -34,12 +34,12 @@
 //!     const CORRECT_CODE: &'static str = "yyyo-ryar-ywdy-qnyj-befo-adeq-bhix-4os";
 //!     const INVALID_CODE: &'static str = "!!yo-ryar-ywdy-qnyj-befo-adeq-bhix-4os";
 //!
-//!     let encoded = encode_chunk(DATA, ECC_SYMBOLS, BITS).unwrap();
+//!     let encoded = encode_chunk(DATA, BITS, ECC_SYMBOLS).unwrap();
 //!     let encoded_pretty = encoded.pretty();
 //!
 //!     assert_eq!(encoded_pretty.as_str(), CORRECT_CODE);
 //!
-//!     let decode_output = decode_chunk(INVALID_CODE, ECC_SYMBOLS, BITS).unwrap();
+//!     let decode_output = decode_chunk(INVALID_CODE, BITS, ECC_SYMBOLS).unwrap();
 //!
 //!     assert_eq!(decode_output.data(), DATA);
 //!     assert_eq!(decode_output.had_errors(), true);

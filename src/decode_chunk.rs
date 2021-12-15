@@ -277,7 +277,7 @@ impl ChunkDecoder {
 /// match the value passed to `encode_chunk`.
 ///
 /// On success, a [`DecodeOutput`] value is returned.
-pub fn decode_chunk(encoded_data: &str, ecc: u8, bits: u8) -> Result<DecodeOutput, DecodeError> {
+pub fn decode_chunk(encoded_data: &str, bits: u8, ecc: u8) -> Result<DecodeOutput, DecodeError> {
     match ecc {
         0 => CHUNK_DECODER_0.decode_chunk(encoded_data, bits),
         1 => CHUNK_DECODER_1.decode_chunk(encoded_data, bits),
